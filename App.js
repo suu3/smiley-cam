@@ -1,9 +1,11 @@
 import React from 'react';
 import { ActivityIndicator, Dimensions, TouchableOpacity } from "react-native";
-import { Camera } from 'expo-camera' // Permission은 유저에게 허락받으려고
+import { Camera } from 'expo-camera';
 import styled from "styled-components/native";
 import { CameraType } from 'expo-camera/build/Camera.types';
 import { MaterialIcons } from "@expo/vector-icons";
+import * as FaceDetector from "expo-face-detector"; // 얼굴 인식
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,7 +28,8 @@ const IconBar = styled.View`
 export default class App extends React.Component {
   state = {
     hasPermission: null,
-    cameraType: Camera.Constants.Type.front
+    cameraType: Camera.Constants.Type.front,
+    smileDetected: false
   };
   componentDidMount = async() => {
     const { status } = await Camera.requestPermissionsAsync();//카메라에 대한 허락을 물음
@@ -37,7 +40,7 @@ export default class App extends React.Component {
     }
   };
   render() {
-    const { hasPermission, cameraType } = this.state;
+    const { hasPermission, cameraType, smileDetected } = this.state;
     if (hasPermission === true) {
       return (
         <CenterView>
@@ -48,7 +51,14 @@ export default class App extends React.Component {
               borderRadius: 10,
               overflow: "hidden"
             }}
-            type={CameraType} //앞을 보여준다...? vs back
+            type={CameraType}
+            onFacesDetected={smileDetected ? null : this.onFacesDetected}
+            faceDetectionClassifications="all" //밑에가 안돼서 바꿨는데 될지모르겠네
+            faceDetectionLandmarks="all"
+/*            faceDetectorSettings={{ //smile detect를 위한 세팅
+              detectLandmarks: FaceDetector.Constants.Landmarks.all,
+              runClassifications: FaceDetector.Constants.Classifications.all
+            }} */
           />
           <IconBar>
             <TouchableOpacity onPress={this.switchCameraType}>
@@ -89,6 +99,17 @@ export default class App extends React.Component {
       this.setState({
         cameraType: Camera.Constants.Type.front
       });
+    }
+  };
+  onFacesDetected = ({ faces }) => {
+    const face = faces[0];
+    if (face) {
+      if (face.smilingProbability > 0.7) {
+        this.setState({
+          smileDetected: true
+        });
+        console.log("take photo");
+      }
     }
   };
 }
