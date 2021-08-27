@@ -54,6 +54,7 @@ export default class App extends React.Component {
     if (hasPermission === true) {
       return (
         <CenterView>
+          <Text>Smile to take photo</Text>
           <Camera
             style={{
               width: width - 40,
@@ -149,15 +150,20 @@ export default class App extends React.Component {
     try {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL); // 갤러리 접근...? 권한
       if (status === "granted") {
-        // const asset = await MediaLibrary.createAssetAsync(uri);
+        const asset = await MediaLibrary.createAssetAsync(uri);
         let album = await MediaLibrary.getAlbumAsync(ALBUM_NAME);
         if (album === null) {
-          album = await MediaLibrary.createAlbumAsync(
-            ALBUM_NAME,
-            Platform.OS !== "iOS" ? asset : null
-          );
+          album = await MediaLibrary.createAlbumAsync(ALBUM_NAME, asset);
         } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album.id);
         }
+        setTimeout(
+          () =>
+            this.setState({
+              smileDetected: false
+            }),
+          2000
+        );
       } else {
         this.setState({ hasPermission: false });
       }
