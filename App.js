@@ -1,14 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Camera, Permissions } from "expo"; // Permission은 유저에게 허락받으려고
+import { ActivityIndicator, Dimensions } from "react-native";
+import { Camera } from 'expo-camera' // Permission은 유저에게 허락받으려고
+import styled from "styled-components/native";
+
+const { width, height } = Dimensions.get("window");
+
+const CenterView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: cornflowerblue;
+`;
+
+const Text = styled.Text`
+  color: white;
+  font-size: 22px;
+`;
+
+
 export default class App extends React.Component {
   state = {
     hasPermission: null
   };
   componentDidMount = async() => {
-    const {status} = await Permissions.askAsync(Permission.CAMERA);//카메라에 대한 허락을 물음
-    console.log(status);
+    const { status } = await Camera.requestPermissionsAsync();//카메라에 대한 허락을 물음
     if(status === "granted"){
       this.setState({hasPermission: true});
     } else{
@@ -19,27 +34,30 @@ export default class App extends React.Component {
     const { hasPermission } = this.state;
     if (hasPermission === true) {
       return (
-        <View>
-          <Text>Has permissions</Text>
-        </View>
+        <CenterView>
+          <Camera
+            style={{
+              width: width - 40,
+              height: height / 1.5,
+              borderRadius: 10,
+              overflow: "hidden"
+            }}
+            type={Camera.Constants.Type.fronte} //앞을 보여준다...? vs back
+          />
+        </CenterView>
       );
     } else if (hasPermission === false) {
       return (
-        <View>
+        <CenterView>
           <Text>Don't have permission for this</Text>
-        </View>
+        </CenterView>
       );
     } else {
-      return <ActivityIndicator />;
+      return (
+        <CenterView>
+          <ActivityIndicator />
+        </CenterView>
+      );
     }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
