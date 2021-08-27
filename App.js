@@ -1,13 +1,19 @@
 import React from 'react';
-import { ActivityIndicator, Dimensions, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  TouchableOpacity,
+  Platform
+} from "react-native";
 import { Camera } from 'expo-camera';
 import styled from "styled-components/native";
 import { CameraType } from 'expo-camera/build/Camera.types';
 import { MaterialIcons } from "@expo/vector-icons";
 import * as FaceDetector from "expo-face-detector"; // 얼굴 인식
-import * as FileSystem from "expo-file-system";
 
 const { width, height } = Dimensions.get("window");
+
+const ALBUM_NAME = "Smiley Cam"; //앨범이 없으면 새로 생성
 
 const CenterView = styled.View`
   flex: 1;
@@ -139,5 +145,24 @@ export default class App extends React.Component {
   };
 
   //사진 저장
-  savePhoto = async uri => {};
+  savePhoto = async uri => {
+    try {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL); // 갤러리 접근...? 권한
+      if (status === "granted") {
+        // const asset = await MediaLibrary.createAssetAsync(uri);
+        let album = await MediaLibrary.getAlbumAsync(ALBUM_NAME);
+        if (album === null) {
+          album = await MediaLibrary.createAlbumAsync(
+            ALBUM_NAME,
+            Platform.OS !== "iOS" ? asset : null
+          );
+        } else {
+        }
+      } else {
+        this.setState({ hasPermission: false });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
