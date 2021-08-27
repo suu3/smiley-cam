@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import { CameraType } from 'expo-camera/build/Camera.types';
 import { MaterialIcons } from "@expo/vector-icons";
 import * as FaceDetector from "expo-face-detector"; // 얼굴 인식
-
+import * as FileSystem from "expo-file-system";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,11 +26,15 @@ const IconBar = styled.View`
 `;
 
 export default class App extends React.Component {
-  state = {
-    hasPermission: null,
-    cameraType: Camera.Constants.Type.front,
-    smileDetected: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      hasPermission: null,
+      cameraType: Camera.Constants.Type.front,
+      smileDetected: false
+    };
+    this.cameraRef = React.createRef();
+  }
   componentDidMount = async() => {
     const { status } = await Camera.requestPermissionsAsync();//카메라에 대한 허락을 물음
     if(status === "granted"){
@@ -59,6 +63,8 @@ export default class App extends React.Component {
               detectLandmarks: FaceDetector.Constants.Landmarks.all,
               runClassifications: FaceDetector.Constants.Classifications.all
             }} */
+
+            ref={this.cameraRef} //react의 reference
           />
           <IconBar>
             <TouchableOpacity onPress={this.switchCameraType}>
@@ -108,8 +114,30 @@ export default class App extends React.Component {
         this.setState({
           smileDetected: true
         });
-        console.log("take photo");
+        this.takePhoto();
       }
     }
   };
+
+  //사진 찍기
+  takePhoto = async () => { //** 항상 await를 try & catch로 감싸줘야함 */
+    try {
+      if (this.cameraRef.current) {
+        let { uri } = await this.cameraRef.current.takePictureAsync({
+          quality: 1 // 1이 슈퍼퀄리티
+        });
+        if (uri) {
+          this.savePhoto(uri);
+        }
+      }
+    } catch (error) {
+      alert(error);
+      this.setState({
+        smileDetected: false
+      });
+    }
+  };
+
+  //사진 저장
+  savePhoto = async uri => {};
 }
