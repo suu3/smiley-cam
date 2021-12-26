@@ -33,13 +33,37 @@ expo install expo-camera
 >};
 > ~~~
 > ### 2️⃣ 전면 후면 변경
->
+> ~~~
+> switchCameraType = () => { 
+>   const { cameraType } = this.state;
+>   if (cameraType === Camera.Constants.Type.front) {
+>     this.setState({
+>       cameraType: Camera.Constants.Type.back
+>     });
+>   } else {
+>     this.setState({
+>       cameraType: Camera.Constants.Type.front
+>     });
+>   }
+> };
+> ~~~
+> ### 3️⃣ 사진 저장
+
 ## 2. Face Detector
-### <a href="https://docs.expo.dev/versions/latest/sdk/camera/">FaceDetector Expo Documentation</a>
+### <a href="https://docs.expo.dev/versions/v44.0.0/sdk/facedetector/">FaceDetector Expo Documentation</a>
 ~~~
 expo install expo-face-detector
 ~~~
 사용에 앞서 라이브러리 설치가 필요함.  
 얼굴 인식 + 얼굴 랜드마크 좌표와 smilingProbability(boolean아님. 0~1 수치로 나옴.)까지 제공해준다.
-
+~~~
+<Camera
+  faceDetectorSettings={{
+    detectLandmarks: FaceDetector.Constants.Landmarks.all,
+    runClassifications: FaceDetector.Constants.Classifications.all
+  }}
+/>
+~~~
 ## 결과물
+![smiley-cam](https://user-images.githubusercontent.com/71166763/147415660-cd9bab03-95de-45cd-9bfc-50bad301cb3c.png)
+
