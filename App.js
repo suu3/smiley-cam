@@ -2,12 +2,10 @@ import React from 'react';
 import {
   ActivityIndicator,
   Dimensions,
-  TouchableOpacity,
-  Platform
+  TouchableOpacity
 } from "react-native";
 import { Camera } from 'expo-camera';
 import styled from "styled-components/native";
-import { CameraType } from 'expo-camera/build/Camera.types';
 import { MaterialIcons } from "@expo/vector-icons";
 import * as FaceDetector from "expo-face-detector"; // 얼굴 인식
 
@@ -19,7 +17,7 @@ const CenterView = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: cornflowerblue;
+  background-color: #76848F;
 `;
 
 const Text = styled.Text`
@@ -54,22 +52,22 @@ export default class App extends React.Component {
     if (hasPermission === true) {
       return (
         <CenterView>
-          <Text>Smile to take photo</Text>
+          <Text style={{marginBottom: 10}}>스마일~!😁</Text>
           <Camera
             style={{
               width: width - 40,
               height: height / 1.5,
-              borderRadius: 10,
+              borderRadius: 20,
               overflow: "hidden"
             }}
-            type={CameraType}
+            type={cameraType}
             onFacesDetected={smileDetected ? null : this.onFacesDetected}
-            faceDetectionClassifications="all" //밑에가 안돼서 바꿨는데 될지모르겠네
-            faceDetectionLandmarks="all"
-/*            faceDetectorSettings={{ //smile detect를 위한 세팅
+            //faceDetectionClassifications="all"
+            //faceDetectionLandmarks="all"
+            faceDetectorSettings={{ //smile detect를 위한 세팅
               detectLandmarks: FaceDetector.Constants.Landmarks.all,
               runClassifications: FaceDetector.Constants.Classifications.all
-            }} */
+            }}
 
             ref={this.cameraRef} //react의 reference
           />
@@ -117,6 +115,7 @@ export default class App extends React.Component {
   onFacesDetected = ({ faces }) => {
     const face = faces[0];
     if (face) {
+      console.log(face);
       if (face.smilingProbability > 0.7) {
         this.setState({
           smileDetected: true
