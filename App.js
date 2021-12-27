@@ -8,6 +8,8 @@ import { Camera } from 'expo-camera';
 import styled from "styled-components/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as FaceDetector from "expo-face-detector"; // 얼굴 인식
+import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from 'expo-media-library';
 
 const { width, height } = Dimensions.get("window");
 
@@ -147,7 +149,7 @@ export default class App extends React.Component {
   //사진 저장
   savePhoto = async uri => {
     try {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL); // 갤러리 접근 권한
+      const { status } = await ImagePicker.requestCameraRollPermissionsAsync(); // 갤러리 접근 권한
       if (status === "granted") {
         const asset = await MediaLibrary.createAssetAsync(uri);
         let album = await MediaLibrary.getAlbumAsync(ALBUM_NAME);
