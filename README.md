@@ -1,6 +1,7 @@
 # 😁 Smiley Cam (2021.8)
 <img src="https://img.shields.io/badge/React Native-61DAFB?style=flat-square&logo=React&logoColor=white"/> <img src="https://img.shields.io/badge/Expo-000020?style=flat-square&logo=Expo&logoColor=white"/>  
-웃으면 사진을 찍는 카메라 앱
+웃으면 사진을 찍는 카메라 앱.  
+(expo-permissions -> expo-image-picker 로 대체)
 ### 노마드 코더 React Native 보너스 강의(smiley-cam) 공부한 내용
 ## 1. Camera
 ### <a href="https://docs.expo.dev/versions/latest/sdk/camera/">Camera Expo Documentation</a>
@@ -79,15 +80,16 @@ expo install expo-camera
 > ~~~
 >
 ## 2. 사진 저장
-### <a href="https://docs.expo.dev/versions/latest/sdk/media-library/">MediaLibrary Expo Documentation</a>
+### <a href="https://docs.expo.dev/versions/latest/sdk/media-library/">MediaLibrary Expo Documentation</a> <br/> <a href="https://docs.expo.dev/versions/latest/sdk/imagepicker/">ImagePicker Expo Documentation</a>
 ~~~
 expo install expo-media-library
+expo install expo-image-picker
 ~~~
 사용에 앞서 라이브러리 설치가 필요함.
 > ~~~
 > savePhoto = async uri => {
 >   try {
->     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL); //갤러리 접근 권한
+>     const { status } = await ImagePicker.requestCameraRollPermissionsAsync(); // 갤러리 접근 권한
 >     if (status === "granted") {
 >       const asset = await MediaLibrary.createAssetAsync(uri);
 >       let album = await MediaLibrary.getAlbumAsync(ALBUM_NAME); //ALBUM_NAME: 직접 지정
@@ -123,6 +125,7 @@ expo install expo-face-detector
   ref={this.cameraRef}
 />
 ~~~
-## 결과물
-![smiley-cam](https://user-images.githubusercontent.com/71166763/147415660-cd9bab03-95de-45cd-9bfc-50bad301cb3c.png)
+## ▶ 결과물
+![smiley-cam](https://user-images.githubusercontent.com/71166763/147491805-4fc65bd7-55dd-4a01-bc78-4162c9cb65b8.png)
+
 
