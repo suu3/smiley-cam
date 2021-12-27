@@ -8,7 +8,6 @@ import { Camera } from 'expo-camera';
 import styled from "styled-components/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as FaceDetector from "expo-face-detector"; // 얼굴 인식
-import * as Permissions from 'expo-permissions';
 
 const { width, height } = Dimensions.get("window");
 
